@@ -66,8 +66,30 @@ const AddLeadFormCard = (props: addLeadRequestFormProps) => {
       i === index ? { ...doc, docName: docName } : doc
     );
     setDocuments(updatedDocuments);
+    // Clear the error if the file is valid
+    const newErrors = [...errors];
+    if (newErrors[index]) {
+      newErrors[index].docName =
+        docName.trim() === "" ? "docName cannot be empty" : "";
+      setErrors(newErrors);
+    }
+  };
+  const validateDocument = (document: Document, index: number) => {
+    const isValidDocName = document.docName.trim() !== "";
+    const isValidFile = document.file.trim() !== "";
+    validateField(index, "docName", document.docName);
+    validateField(index, "file", document.file);
+    return isValidDocName && isValidFile;
   };
 
+  const validateField = (index: number, name: string, value: string) => {
+    const newErrors = [...errors];
+    if (name === "file" || name === "docName") {
+      newErrors[index][name] =
+        value.trim() === "" ? `${name} cannot be empty` : "";
+    }
+    setErrors(newErrors);
+  };
   const handleClickAddDocument = () => {
     setDocuments([...documents, { docName: "", file: "" }]);
   };
@@ -76,6 +98,8 @@ const AddLeadFormCard = (props: addLeadRequestFormProps) => {
     setDocuments((prevDocuments) =>
       prevDocuments.filter((_, i) => i !== index)
     );
+    const newErrors = errors.filter((_, i) => i !== index);
+    setErrors(newErrors);
   };
 
   const handleFileInputChange = (
@@ -146,24 +170,6 @@ const AddLeadFormCard = (props: addLeadRequestFormProps) => {
     }
   };
 
-  const validateDocument = (document: Document, index: number) => {
-    const isValidDocName = document.docName.trim() !== "";
-    const isValidFile = document.file.trim() !== "";
-    validateField(index, "docName", document.docName);
-    validateField(index, "file", document.file);
-    return isValidDocName && isValidFile;
-  };
-
-  const validateField = (index: number, name: string, value: string) => {
-    const newErrors = [...errors];
-    if (name === "docName" || name === "file") {
-      newErrors[index] = {
-        ...newErrors[index],
-        [name]: value.trim() === "" ? `${name} cannot be empty` : "",
-      };
-    }
-    setErrors(newErrors);
-  };
   const callAddLeadAPI = async (lead: ILeadForm, form: any) => {
     try {
       const newLead = await addLeadsService({
@@ -473,7 +479,9 @@ const AddLeadFormCard = (props: addLeadRequestFormProps) => {
                             />
 
                             {errors[index]?.docName && (
-                              <span>{errors[index].docName}</span>
+                              <span style={{ color: "red" }}>
+                                {errors[index].docName}
+                              </span>
                             )}
                           </Grid>
                           <Grid item lg={4} md={4} sm={4} xs={12}>
@@ -536,11 +544,7 @@ const AddLeadFormCard = (props: addLeadRequestFormProps) => {
                           {submitError}
                         </div>
                       )}
-                      <Button
-                        variant="contained"
-                        type="submit"
-                        disabled={submitting}
-                      >
+                      <Button variant="contained" type="submit">
                         submit
                       </Button>
                     </Grid>

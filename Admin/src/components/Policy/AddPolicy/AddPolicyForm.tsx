@@ -371,9 +371,12 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
       .required("EmailId is required")
       .min(1, "EmailId must be at least 1 character"),
     phoneNumber: yup.number().required("Phone Number is required").nullable(),
-    registrationDate: yup.string().required("Registration Date is required"),
-    endDate: yup.string().required("End Date is required"),
-    issueDate: yup.string().required("Issue Date is required"),
+    registrationDate: yup
+      .string()
+      .required("Registration Date is required")
+      .nullable(),
+    endDate: yup.string().required("End Date is required").nullable(),
+    issueDate: yup.string().required("Issue Date is required").nullable(),
     policyType: yup.object().nullable().required("Policy Type is required"),
     caseType: yup.object().nullable().required("Case Type is required"),
     productType: yup.object().nullable().required("Product Type is required"),
@@ -746,7 +749,7 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                             <DatePicker
                               disableFuture
                               label="Registration Date"
-                              value={input.value || new Date()} // Initialize the value if it's undefined
+                              value={input.value || null} // Initialize the value if it's undefined
                               onChange={(date) => input.onChange(date)}
                               renderInput={(params: any) => (
                                 <TextField
@@ -754,6 +757,8 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                                   size="small"
                                   fullWidth
                                   {...params}
+                                  error={meta.touched && !!meta.error}
+                                  helperText={meta.touched && meta.error}
                                 />
                               )}
                             />
@@ -767,7 +772,7 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                               label="Issue Date"
-                              value={input.value || new Date()} // Initialize the value if it's undefined
+                              value={input.value || null} // Initialize the value if it's undefined
                               onChange={(date) => input.onChange(date)}
                               renderInput={(params: any) => (
                                 <TextField
@@ -775,6 +780,8 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                                   size="small"
                                   fullWidth
                                   {...params}
+                                  error={meta.touched && !!meta.error}
+                                  helperText={meta.touched && meta.error}
                                 />
                               )}
                             />
@@ -789,7 +796,7 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                             <DatePicker
                               disablePast
                               label="End Date"
-                              value={input.value || new Date()} // Initialize the value if it's undefined
+                              value={input.value || null} // Initialize the value if it's undefined
                               onChange={(date) => input.onChange(date)}
                               renderInput={(params: any) => (
                                 <TextField
@@ -797,6 +804,8 @@ const AddPolicyForm = (props: AddPolicyFormProps) => {
                                   size="small"
                                   fullWidth
                                   {...params}
+                                  error={meta.touched && !!meta.error}
+                                  helperText={meta.touched && meta.error}
                                 />
                               )}
                             />
